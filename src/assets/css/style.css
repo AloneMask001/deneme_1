@@ -4,25 +4,28 @@
    ========================================================================== */
 
 :root {
-  --brand:        #0F2E4C;
-  --brand-700:    #0A2138;
-  --brand-100:    #E7EDF3;
-  --accent:       #19B85F;
-  --accent-700:   #12924B;
-  --accent-soft:  #E9F8F0;
-  --ink:          #101A24;
-  --muted:        #6C7C8C;
-  --line:         #E5EAEF;
-  --soft:         #F4F7F9;
-  --star:         #FFC107;
-  --hot:          #D6336C;
+  /* Marka renkleri — ürün ambalajından alınmıştır: lacivert + altın */
+  --brand:        #16305E;   /* lacivert — koyu yüzeyler, başlıklar */
+  --brand-700:    #0E2247;
+  --brand-100:    #E8EDF6;
+  --accent:       #8A6B2F;   /* altın (koyu) — buton zemini, beyaz üstü metin */
+  --accent-700:   #705526;
+  --gold:         #A9853F;   /* altın (parlak) — koyu zemin üstü vurgu, çizgiler */
+  --accent-soft:  #F7F1E3;
+  --blue:         #2456A6;   /* ambalajdaki bilgi bandı mavisi */
+  --ink:          #14171C;
+  --muted:        #6E7480;   /* nötrler altına doğru hafif sıcak */
+  --line:         #E6E4DF;
+  --soft:         #F7F6F3;
+  --star:         #C9A227;
+  --hot:          #B03A5B;
   --white:        #FFFFFF;
 
   --radius:       14px;
   --radius-lg:    22px;
   --radius-pill:  999px;
-  --shadow:       0 2px 10px rgba(16, 26, 36, .05);
-  --shadow-lg:    0 12px 40px rgba(16, 26, 36, .10);
+  --shadow:       0 2px 10px rgba(20, 23, 28, .05);
+  --shadow-lg:    0 12px 40px rgba(20, 23, 28, .10);
   --wrap:         1240px;
   --font: 'Poppins', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
 }
@@ -147,18 +150,18 @@ p  { margin: 0 0 1em; }
 .hero { position: relative; background: var(--brand); color: #fff; overflow: hidden; }
 .hero::after {
   content: ''; position: absolute; inset: 0;
-  background: radial-gradient(900px 480px at 78% 22%, rgba(25,184,95,.30), transparent 62%);
+  background: radial-gradient(900px 480px at 78% 22%, rgba(169,133,63,.34), transparent 62%);
 }
 .hero .wrap {
   position: relative; z-index: 1; display: grid; grid-template-columns: 1.05fr .95fr;
   gap: 48px; align-items: center; padding-block: clamp(48px, 7vw, 88px);
 }
 .hero h1 { color: #fff; margin-bottom: .35em; }
-.hero h1 span { color: var(--accent); }
+.hero h1 span { color: var(--gold); }
 .hero p { color: rgba(255,255,255,.82); font-size: 1.07rem; max-width: 46ch; }
 .hero__cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 26px; }
 .hero__stats { display: flex; gap: 36px; margin-top: 46px; flex-wrap: wrap; }
-.hero__stat b { display: block; font-size: 1.75rem; color: var(--accent); line-height: 1; }
+.hero__stat b { display: block; font-size: 1.75rem; color: var(--gold); line-height: 1; }
 .hero__stat span { font-size: .82rem; color: rgba(255,255,255,.65); }
 .hero__art img { border-radius: var(--radius-lg); }
 
@@ -375,7 +378,7 @@ p  { margin: 0 0 1em; }
 
 /* ── İçerik sayfaları ─────────────────────────────────────────────────── */
 .pagehero { position: relative; background: var(--brand); color: #fff; overflow: hidden; }
-.pagehero::after { content:''; position:absolute; inset:0; background: radial-gradient(760px 380px at 82% 30%, rgba(25,184,95,.28), transparent 62%); }
+.pagehero::after { content:''; position:absolute; inset:0; background: radial-gradient(760px 380px at 82% 30%, rgba(169,133,63,.32), transparent 62%); }
 .pagehero .wrap { position: relative; z-index: 1; padding-block: clamp(42px, 6vw, 76px); }
 .pagehero h1 { color: #fff; margin-bottom: .25em; }
 .pagehero p { color: rgba(255,255,255,.8); max-width: 62ch; margin: 0; }
@@ -447,7 +450,7 @@ p  { margin: 0 0 1em; }
 
 /* ── Bülten ───────────────────────────────────────────────────────────── */
 .newsletter { background: var(--brand); color: #fff; position: relative; overflow: hidden; }
-.newsletter::after { content:''; position:absolute; inset:0; background: radial-gradient(700px 360px at 50% 120%, rgba(25,184,95,.34), transparent 60%); }
+.newsletter::after { content:''; position:absolute; inset:0; background: radial-gradient(700px 360px at 50% 120%, rgba(169,133,63,.36), transparent 60%); }
 .newsletter .wrap { position: relative; z-index: 1; text-align: center; padding-block: clamp(46px, 6vw, 74px); }
 .newsletter h2 { color: #fff; }
 .newsletter p { color: rgba(255,255,255,.76); max-width: 52ch; margin-inline: auto; }
@@ -464,7 +467,7 @@ p  { margin: 0 0 1em; }
 }
 .tagline-band::after {
   content: 'VS'; position: absolute; right: 3%; top: 50%; transform: translateY(-50%);
-  font-size: clamp(7rem, 16vw, 15rem); font-weight: 800; color: var(--accent); opacity: .08; line-height: 1;
+  font-size: clamp(7rem, 16vw, 15rem); font-weight: 800; color: var(--gold); opacity: .10; line-height: 1;
 }
 
 /* ── Footer ───────────────────────────────────────────────────────────── */

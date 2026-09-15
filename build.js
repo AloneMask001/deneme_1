@@ -27,7 +27,20 @@ const copy = (from, to) => {
   fs.copyFileSync(path.join(SRC, from), path.join(OUT, to));
 };
 const nameOf = (list, slug) => (list.find((x) => x.slug === slug) || {}).name || slug;
-const imgOf = (p) => `assets/img/product-${p.slug}.svg`;
+
+/** Gerçek ürün fotoğrafı src/assets/img/products/<slug>.(jpg|png|webp)
+ *  olarak eklenmişse onu, yoksa üretilen vektörel yer tutucuyu kullanır. */
+const PHOTO_DIR = path.join(SRC, 'assets/img/products');
+const photoFor = (slug) => {
+  for (const ext of ['jpg', 'jpeg', 'png', 'webp']) {
+    if (fs.existsSync(path.join(PHOTO_DIR, `${slug}.${ext}`))) return `${slug}.${ext}`;
+  }
+  return null;
+};
+const imgOf = (p) => {
+  const photo = photoFor(p.slug);
+  return photo ? `assets/img/products/${photo}` : `assets/img/product-${p.slug}.svg`;
+};
 
 /** vetQom formatı: "AltMarka Hayvan – Fayda – Hacim" */
 const displayName = (p) =>
@@ -83,7 +96,7 @@ function pageHome() {
 <section class="hero">
   <div class="wrap">
     <div>
-      <span class="eyebrow" style="color:#19B85F">Kedi & Köpek Sağlığı</span>
+      <span class="eyebrow" style="color:var(--gold)">Kedi &amp; Köpek Sağlığı</span>
       <h1>Dostlarınız için <span>güçlü</span> beslenme</h1>
       <p>${site.name}; kedi ve köpekler için malt, mama ve besin takviyesi üretir. Formüllerimiz veteriner hekimlerle birlikte geliştirilir, kendi tesisimizde üretilir.</p>
       <div class="hero__cta">
@@ -584,7 +597,7 @@ function pageLegal(title, slug, paragraphs) {
 function buildAssets() {
   const img = (rel, svg) => write(path.join('assets/img', rel), svg);
 
-  img('favicon.svg', `<svg viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg"><rect width="52" height="52" rx="12" fill="#0F2E4C"/><path d="M12 15l14-5 14 5v13c0 9-5.7 15.3-14 18.2C17.7 43.3 12 37 12 28V15Z" fill="#19B85F"/><path d="M20 26.5l4.4 4.7L33 21" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`);
+  img('favicon.svg', `<svg viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg"><rect width="52" height="52" rx="12" fill="#16305E"/><path d="M26 13v26M13 26h26" stroke="#A9853F" stroke-width="7" stroke-linecap="round"/><circle cx="26" cy="26" r="7.5" fill="#16305E"/></svg>`);
   img('logo.svg', art.logo());
   img('logo-light.svg', art.logo({ light: true }));
   img('og.svg', art.placeholder({ label: site.name, w: 1200, h: 630, tone: 'brand' }));
@@ -600,10 +613,12 @@ function buildAssets() {
     img(`${n}.svg`, art.placeholder({ label: ['Laboratuvar', 'Analiz', 'Numune'][i], w: 800, h: 600, tone: 'soft' })));
 
   products.forEach((p) => {
-    img(`product-${p.slug}.svg`, art.productImage({
-      subBrand: p.subBrand, badge: p.badge, accent: p.accent,
-      animal: p.animal, type: p.type, uid: p.slug.replace(/[^a-z0-9]/g, ''),
-    }));
+    if (!photoFor(p.slug)) {
+      img(`product-${p.slug}.svg`, art.productImage({
+        subBrand: p.subBrand, chip: p.ingredients, badge: p.badge, size: p.size,
+        accent: p.accent, animal: p.animal, uid: p.slug.replace(/[^a-z0-9]/g, ''),
+      }));
+    }
     img(`info-${p.slug}.svg`, art.infographic({
       subBrand: p.subBrand, accent: p.accent,
       rows: p.ingredients.split(',').map((s) => s.trim()).slice(0, 5),
@@ -612,6 +627,12 @@ function buildAssets() {
 
   posts.forEach((p) =>
     img(`blog-${p.slug}.svg`, art.placeholder({ label: p.category, w: 800, h: 500, tone: 'soft' })));
+
+  if (fs.existsSync(PHOTO_DIR)) {
+    for (const f of fs.readdirSync(PHOTO_DIR)) {
+      if (/\.(jpe?g|png|webp)$/i.test(f)) copy(`assets/img/products/${f}`, `assets/img/products/${f}`);
+    }
+  }
 
   copy('assets/css/style.css', 'assets/css/style.css');
   copy('assets/js/site.js', 'assets/js/site.js');
