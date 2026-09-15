@@ -30,13 +30,14 @@ jobs:
         with:
           node-version: '22'
 
-      # Pages'i açar (enablement), site alt dizinde yayınlandığı için
-      # base_path'i de çıktı olarak verir
+      # NOT: Pages'in bir kez elle açılması gerekir:
+      # Settings → Pages → Build and deployment → Source: GitHub Actions
+      # Workflow token'ı Pages sitesini oluşturma yetkisine sahip değildir
+      # (enablement: true bu yüzden "Resource not accessible by integration"
+      # hatası veriyor), ancak açıldıktan sonra yayın tamamen otomatiktir.
       - name: Pages yapılandır
         id: pages
         uses: actions/configure-pages@v5
-        with:
-          enablement: true
 
       - name: Siteyi derle
         run: node build.js
