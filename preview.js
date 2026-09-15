@@ -29,7 +29,7 @@ const resolveFrom = (pageRel, url) => {
 };
 
 function rewrite(html, pageRel) {
-  return html.replace(/(href|src)="([^"]+)"/g, (m, attr, url) => {
+  return html.replace(/(href|src|data-full)="([^"]+)"/g, (m, attr, url) => {
     if (/^(https?:|mailto:|tel:|data:|#)/.test(url)) return m;
     const clean = url.split('#')[0].split('?')[0];
     const abs = resolveFrom(pageRel, clean);

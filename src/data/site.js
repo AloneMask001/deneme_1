@@ -25,10 +25,20 @@ export const site = {
     linkedin: '#',
   },
 
-  // Pazaryeri mağaza sayfaları (genel) — gerçek mağaza linkleriyle değiştirilmeli
+  // Resmî pazaryeri mağazalarımız
   stores: [
-    { key: 'trendyol', name: 'Trendyol', url: '#', color: '#F27A1A' },
-    { key: 'hepsiburada', name: 'Hepsiburada', url: '#', color: '#FF6000' },
+    {
+      key: 'trendyol',
+      name: 'Trendyol',
+      url: 'https://www.trendyol.com/magaza/vet-strong-m-1108527?sst=0',
+      color: '#F27A1A',
+    },
+    {
+      key: 'hepsiburada',
+      name: 'Hepsiburada',
+      url: 'https://www.hepsiburada.com/magaza/vet-strong',
+      color: '#FF6000',
+    },
   ],
 };
 
