@@ -1,3 +1,0 @@
-User-agent: *
-Allow: /
-Sitemap: https://www.vetstrong.com.tr/sitemap.xml

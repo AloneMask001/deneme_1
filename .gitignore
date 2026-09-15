@@ -1,4 +1,7 @@
 node_modules/
 .DS_Store
 *.log
+
+# Derleme çıktıları — `npm run build` ve `node preview.js` ile üretilir
+dist/
 artifact/
