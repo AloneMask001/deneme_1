@@ -36,8 +36,15 @@
     location.href = base + 'urunler.html?q=' + encodeURIComponent(q);
   });
 
+  /* ── Görünüm içi etkileşimler (SPA önizlemesinde her sayfa
+        değişiminde yeniden çalıştırılır) ──────────────────────────── */
+  function initView(scope) {
+    var root = scope || document;
+    var $v  = function (s) { return root.querySelector(s); };
+    var $$v = function (s) { return Array.prototype.slice.call(root.querySelectorAll(s)); };
+
   /* ── Akordeon ───────────────────────────────────────────────── */
-  $$('.acc__btn').forEach(function (btn) {
+  $$v('.acc__btn').forEach(function (btn) {
     btn.addEventListener('click', function () {
       var acc = btn.closest('.acc');
       var closed = acc.classList.toggle('closed');
@@ -47,7 +54,7 @@
   });
 
   /* ── Sekmeler ───────────────────────────────────────────────── */
-  $$('.tabs').forEach(function (tabs) {
+  $$v('.tabs').forEach(function (tabs) {
     $$('.tabs__btn', tabs).forEach(function (btn) {
       btn.addEventListener('click', function () {
         $$('.tabs__btn', tabs).forEach(function (b) { b.classList.remove('active'); });
@@ -61,9 +68,9 @@
 
   /* ── Ürün galerisi ──────────────────────────────────────────── */
   (function () {
-    var main = $('#galleryMain');
+    var main = $v('#galleryMain');
     if (!main) return;
-    var thumbs = $$('.gallery__thumb');
+    var thumbs = $$v('.gallery__thumb');
     var i = 0;
     function show(n) {
       i = (n + thumbs.length) % thumbs.length;
@@ -71,21 +78,22 @@
       thumbs.forEach(function (t, k) { t.classList.toggle('active', k === i); });
     }
     thumbs.forEach(function (t, k) { t.addEventListener('click', function () { show(k); }); });
-    var p = $('#galPrev'), n = $('#galNext');
+    var p = $v('#galPrev'), n = $v('#galNext');
     p && p.addEventListener('click', function () { show(i - 1); });
     n && n.addEventListener('click', function () { show(i + 1); });
   })();
 
   /* ── Katalog filtreleri ─────────────────────────────────────── */
   (function () {
-    var root = $('#catalog');
-    if (!root) return;
+    var croot = $v('#catalog');
+    if (!croot) return;
+    var root2 = croot;
 
-    var cards   = $$('.pcard[data-slug]', root);
-    var countEl = $('#catalogCount');
-    var emptyEl = $('#catalogEmpty');
-    var searchEl= $('#filterSearch');
-    var boxes   = $$('.fpill input', root);
+    var cards   = $$('.pcard[data-slug]', root2);
+    var countEl = $v('#catalogCount');
+    var emptyEl = $v('#catalogEmpty');
+    var searchEl= $v('#filterSearch');
+    var boxes   = $$('.fpill input', root2);
 
     // URL'den gelen arama terimi
     var params = new URLSearchParams(location.search);
@@ -120,7 +128,7 @@
     boxes.forEach(function (b) { b.addEventListener('change', apply); });
     searchEl && searchEl.addEventListener('input', apply);
 
-    var clear = $('#filterClear');
+    var clear = $v('#filterClear');
     clear && clear.addEventListener('click', function () {
       boxes.forEach(function (b) { b.checked = false; });
       if (searchEl) searchEl.value = '';
@@ -128,14 +136,18 @@
     });
 
     // Grup aç/kapa
-    $$('.fgroup__title', root).forEach(function (t) {
+    $$('.fgroup__title', root2).forEach(function (t) {
       t.addEventListener('click', function () { t.closest('.fgroup').classList.toggle('collapsed'); });
     });
 
     // Mobil filtre paneli
-    var ft = $('#filtersToggle'), fb = $('#filtersBody');
+    var ft = $v('#filtersToggle'), fb = $v('#filtersBody');
     ft && ft.addEventListener('click', function () { fb.classList.toggle('open'); });
 
     apply();
   })();
+  }
+
+  window.vsInitView = initView;
+  initView(document);
 })();

@@ -92,7 +92,7 @@ p  { margin: 0 0 1em; }
    position:fixed alt öğeler için yeni bir kapsayıcı blok oluşturur ve
    mobil off-canvas menüyü header'ın içine hapsederek yatay taşma yaratır. */
 .header {
-  position: sticky; top: 0; z-index: 60; background: #fff;
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 60; background: #fff;
   border-bottom: 1px solid var(--line);
 }
 .header .wrap { display: flex; align-items: center; gap: 30px; min-height: 76px; }
