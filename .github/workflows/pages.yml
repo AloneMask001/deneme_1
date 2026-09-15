@@ -1,0 +1,53 @@
+name: GitHub Pages
+
+on:
+  push:
+    branches: [claude/wonderful-cray-u6zbo4]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Aynı anda tek yayın çalışsın; devam edeni iptal etme
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Depoyu al
+        uses: actions/checkout@v4
+
+      - name: Node kur
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # Pages'i açar (enablement), site alt dizinde yayınlandığı için
+      # base_path'i de çıktı olarak verir
+      - name: Pages yapılandır
+        id: pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Siteyi derle
+        run: node build.js
+        env:
+          SITE_URL: ${{ steps.pages.outputs.base_url }}
+
+      - name: Çıktıyı yükle
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+      - name: Yayınla
+        id: deployment
+        uses: actions/deploy-pages@v4

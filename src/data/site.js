@@ -7,7 +7,9 @@ export const site = {
   taglineEn: 'Strong Life, Healthy Friends...',
   description:
     'VET STRONG; kedi ve köpekler için malt, mama ve besin takviyesi üreten bir hayvan sağlığı firmasıdır.',
-  url: 'https://www.vetstrong.com.tr',
+  // Yayın adresi. Sitemap ve paylaşım etiketleri bunu kullanır.
+  // SITE_URL ortam değişkeni ile geçersiz kılınabilir (ör. GitHub Pages).
+  url: process.env.SITE_URL || 'https://www.vetstrong.com.tr',
 
   // DUMMY iletişim bilgileri
   email: 'info@vetstrong.com.tr',

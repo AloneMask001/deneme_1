@@ -726,6 +726,7 @@ function build() {
 ${urls.map((u) => `  <url><loc>${site.url}/${u}</loc></url>`).join('\n')}
 </urlset>`);
   write('robots.txt', `User-agent: *\nAllow: /\nSitemap: ${site.url}/sitemap.xml\n`);
+  write('.nojekyll', '');   // GitHub Pages: Jekyll işlemesini atla
 
   const count = urls.length;
   console.log(`✓ dist/ üretildi — ${count} sayfa, ${products.length} ürün, ${posts.length} blog yazısı`);
