@@ -230,8 +230,9 @@ p  { margin: 0 0 1em; }
   background: var(--soft); border-radius: var(--radius-lg); padding: 34px 26px; text-align: center;
   border: 1.5px solid transparent; transition: .18s;
 }
-.store-card:hover { border-color: var(--accent); background: #fff; box-shadow: var(--shadow-lg); }
+.store-card:hover { border-color: var(--store, var(--accent)); background: #fff; box-shadow: var(--shadow-lg); }
 .store-card b { display: block; font-size: 1.32rem; color: var(--brand); margin-bottom: 4px; }
+.store-card__mark { color: var(--store, var(--brand)); font-weight: 800; letter-spacing: -.02em; }
 .store-card span { font-size: .85rem; color: var(--muted); }
 
 /* ── Katalog (filtre + grid) ──────────────────────────────────────────── */
@@ -311,13 +312,32 @@ p  { margin: 0 0 1em; }
 .buybox__title { font-size: .95rem; font-weight: 700; color: var(--brand); margin-bottom: 4px; }
 .buybox__sub { font-size: .84rem; color: var(--muted); margin-bottom: 18px; }
 .buybox__links { display: flex; flex-direction: column; gap: 11px; }
+/* Pazaryeri butonu — zemin beyaz, marka rengi kenarlık ve logo/yazım
+   biçimi. Beyaz üstü turuncu metin, turuncu üstü beyaz metinden çok daha
+   okunaklı; marka kimliği yine net görünüyor.
+   --store: ilgili pazaryerinin marka rengi (satır içi stil ile gelir). */
 .store-btn {
-  display: flex; align-items: center; justify-content: space-between; gap: 12px;
-  padding: 15px 22px; border-radius: var(--radius-pill); background: var(--brand); color: #fff;
+  display: flex; align-items: center; justify-content: space-between; gap: 14px;
+  padding: 16px 20px; border-radius: var(--radius); color: var(--brand);
   font-weight: 600; font-size: .95rem; transition: .18s;
+  background: color-mix(in srgb, var(--store, #16305E) 7%, #fff);
+  border: 2px solid color-mix(in srgb, var(--store, #16305E) 42%, #fff);
 }
-.store-btn:hover { background: var(--accent); transform: translateY(-1px); }
-.store-btn svg { width: 17px; height: 17px; flex-shrink: 0; }
+.store-btn:hover {
+  background: color-mix(in srgb, var(--store, #16305E) 13%, #fff);
+  border-color: var(--store, var(--brand));
+  box-shadow: 0 8px 22px color-mix(in srgb, var(--store, #16305E) 24%, transparent);
+  transform: translateY(-1px);
+}
+.store-btn__left { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.store-btn__logo { height: 22px; width: auto; flex-shrink: 0; }
+.store-btn__mark {
+  font-size: 1.22rem; font-weight: 800; letter-spacing: -.02em;
+  color: var(--store, var(--brand)); flex-shrink: 0;
+}
+.store-btn__label { color: var(--brand); font-weight: 600; font-size: .95rem; }
+.store-btn svg { width: 18px; height: 18px; flex-shrink: 0; color: var(--store, var(--brand)); }
+.store-btn:hover svg { color: var(--store, var(--brand)); }
 .soon-note {
   display: flex; align-items: center; gap: 10px; padding: 15px 20px; border-radius: var(--radius);
   background: var(--soft); color: var(--muted); font-size: .88rem;
@@ -533,6 +553,9 @@ p  { margin: 0 0 1em; }
 }
 
 @media (max-width: 680px) {
+  .store-btn { flex-wrap: wrap; }
+  .store-btn__label { width: 100%; }
+
   .grid-products, .grid-products--3 { grid-template-columns: repeat(2, 1fr); gap: 22px 16px; }
   .topbar__links { display: none; }
   .gallery { grid-template-columns: minmax(0, 1fr); max-width: none; position: static; }

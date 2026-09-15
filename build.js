@@ -31,6 +31,16 @@ const nameOf = (list, slug) => (list.find((x) => x.slug === slug) || {}).name ||
 /** Gerçek ürün fotoğrafı src/assets/img/products/<slug>.(jpg|png|webp)
  *  olarak eklenmişse onu, yoksa üretilen vektörel yer tutucuyu kullanır. */
 const PHOTO_DIR = path.join(SRC, 'assets/img/products');
+const STORE_DIR = path.join(SRC, 'assets/img/stores');
+/** Resmî mağaza logosu src/assets/img/stores/<key>.(svg|png) olarak
+ *  eklenmişse onu döndürür; yoksa null (yazım biçimi kullanılır). */
+const storeLogo = (key) => {
+  for (const ext of ['svg', 'png', 'webp']) {
+    if (fs.existsSync(path.join(STORE_DIR, `${key}.${ext}`))) return `assets/img/stores/${key}.${ext}`;
+  }
+  return null;
+};
+const storeMeta = (key) => site.stores.find((x) => x.key === key) || {};
 const photoFor = (slug) => {
   for (const ext of ['jpg', 'jpeg', 'png', 'webp']) {
     if (fs.existsSync(path.join(PHOTO_DIR, `${slug}.${ext}`))) return `${slug}.${ext}`;
@@ -170,7 +180,7 @@ function pageHome() {
       <p>Satış işlemleri anlaşmalı pazaryerleri üzerinden gerçekleşir. Ürün sayfalarındaki bağlantılarla doğrudan mağazamıza gidebilirsiniz.</p>
     </div>
     <div class="stores-row">
-      ${site.stores.map((s) => `<a class="store-card" href="${s.url}" target="_blank" rel="noopener"><b>${esc(s.name)}</b><span>Resmî mağazamız</span></a>`).join('')}
+      ${site.stores.map((s) => `<a class="store-card" href="${s.url}" target="_blank" rel="noopener" style="--store:${s.color}"><b class="store-card__mark">${esc(s.name.toLocaleLowerCase('tr'))}</b><span>Resmî mağazamız</span></a>`).join('')}
       <a class="store-card" href="${base}satis-noktalari.html"><b>Pet Shop & Veteriner</b><span>Size en yakın nokta</span></a>
     </div>
   </div>
@@ -259,8 +269,18 @@ function pageProduct(p) {
 
   const buy = p.links.length
     ? `<div class="buybox__links">${p.links
-        .map((l) => `<a class="store-btn" href="${l.url}" target="_blank" rel="noopener nofollow">
-          <span>${esc(l.name)}'da Satın Al</span>${icons.ext}</a>`)
+        .map((l) => {
+          const meta = storeMeta(l.store);
+          const logo = storeLogo(l.store);
+          const mark = logo
+            ? `<img class="store-btn__logo" src="${base}${logo}" alt="${esc(l.name)}" loading="lazy">`
+            : `<span class="store-btn__mark">${esc(l.name.toLocaleLowerCase('tr'))}</span>`;
+          return `<a class="store-btn" href="${l.url}" target="_blank" rel="noopener nofollow"
+  style="--store:${meta.color || '#16305E'}" aria-label="${esc(l.name)} üzerinden satın al">
+  <span class="store-btn__left">${mark}<span class="store-btn__label">üzerinden satın al</span></span>
+  ${icons.ext}
+</a>`;
+        })
         .join('')}</div>`
     : `<div class="soon-note">${icons.pin}<span>Bu ürün yakında satışa sunulacaktır. Satış noktaları için <a href="${base}iletisim.html" style="color:var(--accent-700);text-decoration:underline">bizimle iletişime geçebilirsiniz</a>.</span></div>`;
 
@@ -482,7 +502,7 @@ function pageStores() {
 <section class="section"><div class="wrap">
   <div class="section-head"><span class="eyebrow">Online</span><h2>Resmî mağazalarımız</h2></div>
   <div class="stores-row" style="grid-template-columns:repeat(2,1fr);max-width:720px;margin-inline:auto">
-    ${site.stores.map((s) => `<a class="store-card" href="${s.url}" target="_blank" rel="noopener"><b>${esc(s.name)}</b><span>Mağazaya git</span></a>`).join('')}
+    ${site.stores.map((s) => `<a class="store-card" href="${s.url}" target="_blank" rel="noopener" style="--store:${s.color}"><b class="store-card__mark">${esc(s.name.toLocaleLowerCase('tr'))}</b><span>Mağazaya git</span></a>`).join('')}
   </div>
 </div></section>
 
@@ -631,6 +651,12 @@ function buildAssets() {
   if (fs.existsSync(PHOTO_DIR)) {
     for (const f of fs.readdirSync(PHOTO_DIR)) {
       if (/\.(jpe?g|png|webp)$/i.test(f)) copy(`assets/img/products/${f}`, `assets/img/products/${f}`);
+    }
+  }
+
+  if (fs.existsSync(STORE_DIR)) {
+    for (const f of fs.readdirSync(STORE_DIR)) {
+      if (/\.(svg|png|webp)$/i.test(f)) copy(`assets/img/stores/${f}`, `assets/img/stores/${f}`);
     }
   }
 
