@@ -91,3 +91,18 @@ Zorunlu alanlar: `slug`, `name`, `subBrand`, `benefit`, `animal`
 
 `links: []` boş bırakılırsa ürün "Yakında" olarak işaretlenir ve satın alma
 butonu yerine bilgilendirme kutusu gösterilir.
+
+## Yayınlama
+
+`dist/` klasörü tamamen statiktir, sunucu tarafı gereksinimi yoktur.
+
+**Statik hosting (önerilen):** Netlify, Vercel, Cloudflare Pages
+- Build komutu: `npm run build`
+- Yayın klasörü: `dist`
+
+**Klasik hosting (cPanel / FTP):** `npm run build` çalıştırıp `dist/`
+klasörünün içeriğini `public_html` altına yükleyin.
+
+Yayına almadan önce `src/data/site.js` içindeki `url` alanını gerçek alan
+adıyla güncelleyin — `sitemap.xml` ve paylaşım meta etiketleri bu değeri
+kullanır.
