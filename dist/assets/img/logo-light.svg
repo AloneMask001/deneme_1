@@ -1,0 +1,7 @@
+<svg viewBox="0 0 268 56" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="VET STRONG">
+  <path d="M8 9.5 26 4l18 5.5v17.2c0 11.2-7.3 19.6-18 23.3-10.7-3.7-18-12.1-18-23.3V9.5Z" fill="#19B85F"/>
+  <path d="M18.5 26.5l5.6 6 9.6-12.2" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="56" y="27" font-family="Poppins, Segoe UI, Arial, sans-serif" font-size="21" font-weight="700" letter-spacing="1.5" fill="#FFFFFF">VET</text>
+  <text x="103" y="27" font-family="Poppins, Segoe UI, Arial, sans-serif" font-size="21" font-weight="700" letter-spacing="1.5" fill="#19B85F">STRONG</text>
+  <text x="57" y="43" font-family="Poppins, Segoe UI, Arial, sans-serif" font-size="8.4" letter-spacing="3.6" fill="rgba(255,255,255,.62)">ANIMAL NUTRITION</text>
+</svg>

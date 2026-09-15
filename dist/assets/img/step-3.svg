@@ -1,0 +1,8 @@
+<svg viewBox="0 0 220 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Kullanım adımı 3">
+  <rect width="220" height="180" fill="#fff"/>
+  <g transform="translate(92 40) rotate(-42)">
+       <rect x="-20" y="0" width="40" height="96" rx="12" fill="none" stroke="#0F2E4C" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+       <rect x="-13" y="-22" width="26" height="24" rx="6" fill="none" stroke="#0F2E4C" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+       <path d="M-20 96h40l-6 16h-28z" fill="none" stroke="#0F2E4C" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+     </g><path d="M150 118c20 6 34 6 52 0" fill="none" stroke="#0F2E4C" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="176" cy="96" r="5" fill="#0F2E4C"/>
+</svg>

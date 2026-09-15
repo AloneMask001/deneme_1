@@ -1,0 +1,10 @@
+<svg viewBox="0 0 1200 630" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="VET STRONG">
+  <rect width="1200" height="630" fill="#0F2E4C"/>
+  <g opacity=".28" fill="none" stroke="#19B85F" stroke-width="2">
+    <circle cx="936" cy="189" r="189"/>
+    <circle cx="240" cy="466.2" r="138.6"/>
+    <path d="M0 516.6 Q 360 365.4 744 504 T 1200 415.8"/>
+  </g>
+  <text x="600" y="315" text-anchor="middle" font-family="Poppins, Arial, sans-serif" font-size="39" font-weight="700" fill="#fff" opacity=".9">VET STRONG</text>
+  <text x="600" y="368" text-anchor="middle" font-family="Poppins, Arial, sans-serif" font-size="19" letter-spacing="4" fill="#fff" opacity=".5">DUMMY GÖRSEL</text>
+</svg>

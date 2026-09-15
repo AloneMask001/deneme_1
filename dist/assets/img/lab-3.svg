@@ -1,0 +1,10 @@
+<svg viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Numune">
+  <rect width="800" height="600" fill="#F4F7F9"/>
+  <g opacity=".28" fill="none" stroke="#0F2E4C" stroke-width="2">
+    <circle cx="624" cy="180" r="180"/>
+    <circle cx="160" cy="444" r="132"/>
+    <path d="M0 491.99999999999994 Q 240 348 496 480 T 800 396"/>
+  </g>
+  <text x="400" y="300" text-anchor="middle" font-family="Poppins, Arial, sans-serif" font-size="38" font-weight="700" fill="#0F2E4C" opacity=".9">Numune</text>
+  <text x="400" y="350" text-anchor="middle" font-family="Poppins, Arial, sans-serif" font-size="18" letter-spacing="4" fill="#0F2E4C" opacity=".5">DUMMY GÖRSEL</text>
+</svg>

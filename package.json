@@ -1,0 +1,12 @@
+{
+  "name": "vet-strong-web",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "VET STRONG kurumsal & ürün kataloğu web sitesi (statik site üreteci)",
+  "scripts": {
+    "build": "node build.js",
+    "dev": "node build.js && node serve.js",
+    "serve": "node serve.js"
+  }
+}

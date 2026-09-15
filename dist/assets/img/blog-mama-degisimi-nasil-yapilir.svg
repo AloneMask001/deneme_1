@@ -1,0 +1,10 @@
+<svg viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Beslenme">
+  <rect width="800" height="500" fill="#F4F7F9"/>
+  <g opacity=".28" fill="none" stroke="#0F2E4C" stroke-width="2">
+    <circle cx="624" cy="150" r="150"/>
+    <circle cx="160" cy="370" r="110"/>
+    <path d="M0 410 Q 240 290 496 400 T 800 330"/>
+  </g>
+  <text x="400" y="250" text-anchor="middle" font-family="Poppins, Arial, sans-serif" font-size="31" font-weight="700" fill="#0F2E4C" opacity=".9">Beslenme</text>
+  <text x="400" y="292" text-anchor="middle" font-family="Poppins, Arial, sans-serif" font-size="15" letter-spacing="4" fill="#0F2E4C" opacity=".5">DUMMY GÖRSEL</text>
+</svg>
