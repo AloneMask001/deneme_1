@@ -106,3 +106,25 @@ klasörünün içeriğini `public_html` altına yükleyin.
 Yayına almadan önce `src/data/site.js` içindeki `url` alanını gerçek alan
 adıyla güncelleyin — `sitemap.xml` ve paylaşım meta etiketleri bu değeri
 kullanır.
+
+## Tek dosyalık sürüm (müşteriye göndermek için)
+
+```bash
+npm run single      # → dist-single/index.html
+```
+
+Bu komut, sitenin tamamını **tek bir `index.html`** dosyasına gömer: CSS,
+JavaScript ve bütün görseller dosyanın içindedir. Karşı tarafta:
+
+- Çift tıklayınca tarayıcıda açılır, sunucu ya da kurulum gerekmez
+- İnternet olmadan da çalışır (yalnızca yazı tipi ve harita internet ister)
+- E-posta veya WhatsApp ile tek dosya olarak gönderilebilir (~1 MB)
+
+Sayfalar arası geçiş adres çubuğundaki `#/urunler` gibi bağlantılarla
+yapılır; menüler, filtreler, galeri ve sekmeler aynen çalışır.
+
+> Üstteki "ÖNİZLEME" şeridini kaldırmak için `preview.js` içindeki
+> `.preview-note` satırını silin ve komutu yeniden çalıştırın.
+
+**Gerçek yayın için** bu sürümü değil, `dist/` klasörünü kullanın: çok
+sayfalı yapı arama motorları için gereklidir.

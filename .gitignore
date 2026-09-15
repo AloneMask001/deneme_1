@@ -5,3 +5,4 @@ node_modules/
 # Derleme çıktıları — `npm run build` ve `node preview.js` ile üretilir
 dist/
 artifact/
+dist-single/

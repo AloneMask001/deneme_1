@@ -55,7 +55,10 @@ const bodyInner = /<body>([\s\S]*)<\/body>/.exec(idx)[1];
 const [beforeMain, afterMain] = bodyInner.split(/<main>[\s\S]*?<\/main>/);
 
 const shellHead = rewrite(beforeMain, 'index.html');
-const shellFoot = rewrite(afterMain, 'index.html');
+// dist'teki sayfa iskeleti zaten site.js'i içeriyor; SPA kendi kopyasını
+// eklediği için buradaki etiketi çıkarıyoruz (yoksa iki kez yüklenir).
+const shellFoot = rewrite(afterMain, 'index.html')
+  .replace(/<script src="assets\/js\/site\.js"[^>]*><\/script>/g, '');
 
 const page = `<title>VET STRONG</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
