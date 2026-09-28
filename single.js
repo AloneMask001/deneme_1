@@ -61,11 +61,38 @@ const embed = (rel) => {
   return uri;
 };
 
-// JSON içinde yollar \" ile kaçışlı geldiği için iki biçimi de yakala
+// Görünümler (window.__VIEWS__ JSON'u) aynı görseli defalarca içerir; her birini
+// ayrı ayrı gömmek dosyayı katlar. Bu yüzden görünümlerde görseller __IMG_n__
+// belirteciyle geçer, veri bir kez window.__IMGS__ dizisinde tutulur ve
+// yönlendirici sayfayı çizerken belirteçleri yerine koyar.
+const table = [];
+const idOf = (rel) => {
+  const uri = embed(rel);
+  if (!uri) return null;
+  let i = table.indexOf(uri);
+  if (i === -1) { table.push(uri); i = table.length - 1; }
+  return i;
+};
+const vStart = html.indexOf('window.__VIEWS__ = ');
+const vEnd = html.indexOf('</script>', vStart);
+let views = html.slice(vStart, vEnd);
+views = views.replace(/(\\?")(assets\/img\/[^"\\]+)\1/g, (m, q, rel) => {
+  const i = idOf(rel);
+  return i === null ? m : `${q}__IMG_${i}__${q}`;
+});
+html = html.slice(0, vStart) + views + `\nwindow.__IMGS__ = ${JSON.stringify(table)};\n` + html.slice(vEnd);
+
+// Görünüm dışındaki (kabuk) görseller doğrudan gömülür
 html = html.replace(/(\\?")(assets\/img\/[^"\\]+)\1/g, (m, q, rel) => {
   const uri = embed(rel);
   return uri ? `${q}${uri}${q}` : m;
 });
+
+// Yönlendirici belirteçleri çizim anında çözsün
+const renderLine = 'view.innerHTML = html;';
+if (!html.includes(renderLine)) throw new Error('yönlendirici satırı bulunamadı');
+html = html.replace(renderLine, () =>
+  'view.innerHTML = html.replace(/__IMG_(\\d+)__/g, function (m, i) { return window.__IMGS__[i]; });');
 
 fs.mkdirSync(OUT, { recursive: true });
 const out = path.join(OUT, FILE);

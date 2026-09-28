@@ -1,4 +1,9 @@
-import { site, productTypes, animals } from '../data/site.js';
+import { site, productTypes as allTypes, animals as allAnimals } from '../data/site.js';
+import { products } from '../data/products.js';
+
+// Menüde yalnızca en az bir ürünü olan kategoriler görünür
+const animals = allAnimals.filter((a) => products.some((p) => p.animal === a.slug));
+const productTypes = allTypes.filter((t) => products.some((p) => p.type === t.slug));
 import { logo } from './svg.js';
 
 export const esc = (s) => String(s ?? '')
@@ -123,7 +128,9 @@ function footer(base) {
     <div class="footer__logo"><a href="${base}index.html">${logo()}</a></div>
     <div class="footer__top">
       ${col('Kurumsal', [['Hakkımızda', 'hakkimizda.html'], ['Üretim & Kalite', 'uretim-ve-kalite.html'], ['Kariyer', 'kariyer.html'], ['İletişim', 'iletisim.html']])}
-      ${col('Ürünler', [['Tüm Ürünler', 'urunler.html'], ['Kedi Ürünleri', 'urunler/kedi.html'], ['Köpek Ürünleri', 'urunler/kopek.html'], ['Malt', 'urunler/malt.html'], ['Mama', 'urunler/mama.html'], ['Besin Takviyeleri', 'urunler/besin-takviyeleri.html']])}
+      ${col('Ürünler', [['Tüm Ürünler', 'urunler.html'],
+        ...animals.map((a) => [`${a.name} Ürünleri`, `urunler/${a.slug}.html`]),
+        ...productTypes.map((t) => [t.name, `urunler/${t.slug}.html`])])}
       ${col('Bilgi', [['Satış Noktaları', 'satis-noktalari.html'], ['Blog', 'blog.html'], ['Gizlilik Politikası', 'gizlilik-politikasi.html'], ['KVKK Aydınlatma Metni', 'kvkk.html']])}
       ${col('İletişim', [[site.phone, `tel:${site.phoneHref}`], [site.email, `mailto:${site.email}`]])}
       <div class="footer__about">

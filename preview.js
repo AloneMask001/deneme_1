@@ -69,7 +69,7 @@ const page = `<title>VET STRONG</title>
   .preview-note{background:#0F2E4C;color:rgba(255,255,255,.9);font-size:.8rem;text-align:center;padding:9px 16px}
   .preview-note b{color:#19B85F}
 </style>
-<div class="preview-note"><b>ÖNİZLEME</b> — Ürün görselleri, logo ve firma metinleri geçicidir. Satın alma bağlantısı yalnızca Anti Hairball Malt Paste 100 gr ürününde gerçektir.</div>
+<div class="preview-note"><b>ÖNİZLEME</b> — Ürünler, fiyatlar, görseller ve yorumlar Trendyol mağazamızdan alınmıştır. Logo, iletişim bilgileri ve firma metinleri geçicidir.</div>
 ${shellHead}
 <main id="view"></main>
 ${shellFoot}

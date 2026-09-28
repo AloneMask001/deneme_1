@@ -41,12 +41,26 @@ const storeLogo = (key) => {
   return null;
 };
 const storeMeta = (key) => site.stores.find((x) => x.key === key) || {};
-const photoFor = (slug) => {
-  for (const ext of ['jpg', 'jpeg', 'png', 'webp']) {
-    if (fs.existsSync(path.join(PHOTO_DIR, `${slug}.${ext}`))) return `${slug}.${ext}`;
-  }
-  return null;
+/** Gerçek ürün fotoğrafları: <slug>-1.jpg, <slug>-2.jpg … sırasıyla
+ *  (ya da tek bir <slug>.jpg). Galeri hepsini, kartlar ilkini kullanır. */
+const photosFor = (slug) => {
+  if (!fs.existsSync(PHOTO_DIR)) return [];
+  const files = fs.readdirSync(PHOTO_DIR).filter((f) => /\.(jpe?g|png|webp)$/i.test(f));
+  const numbered = files
+    .map((f) => ({ f, m: f.match(new RegExp(`^${slug}-(\\d+)\\.`)) }))
+    .filter((x) => x.m)
+    .sort((a, b) => a.m[1] - b.m[1])
+    .map((x) => x.f);
+  if (numbered.length) return numbered;
+  const single = files.find((f) => f.replace(/\.[^.]+$/, '') === slug);
+  return single ? [single] : [];
 };
+const photoFor = (slug) => photosFor(slug)[0] || null;
+
+/** Yalnızca en az bir ürünü olan hayvan / tip / konular (boş kategori sayfası üretme). */
+const usedAnimals = animals.filter((a) => products.some((p) => p.animal === a.slug));
+const usedTypes = productTypes.filter((t) => products.some((p) => p.type === t.slug));
+const usedTopics = topics.filter((t) => products.some((p) => p.topics.includes(t.slug)));
 const imgOf = (p) => {
   const photo = photoFor(p.slug);
   return photo ? `assets/img/products/${photo}` : `assets/img/product-${p.slug}.svg`;
@@ -75,7 +89,12 @@ function productCard(p, base) {
 }
 
 function photoTile(kind, base) {
-  return `<div class="photo-tile"><img src="${base}assets/img/pet-${kind}.svg" alt="${kind === 'cat' ? 'Kedi' : 'Köpek'}" loading="lazy"></div>`;
+  // Varsa markanın gerçek yaşam tarzı fotoğrafı (ürün galerisinin 2. görseli), yoksa illüstrasyon
+  const p = products.find((x) => x.animal === (kind === 'cat' ? 'kedi' : 'kopek'));
+  const real = p && photosFor(p.slug)[1];
+  return real
+    ? `<div class="photo-tile photo-tile--real"><img src="${base}assets/img/products/${real}" alt="${esc(p.name)} ile mutlu bir kedi" loading="lazy"></div>`
+    : `<div class="photo-tile"><img src="${base}assets/img/pet-${kind}.svg" alt="${kind === 'cat' ? 'Kedi' : 'Köpek'}" loading="lazy"></div>`;
 }
 
 function blogCard(post, base) {
@@ -101,6 +120,10 @@ function pageHome() {
   const cats = products.filter((p) => p.animal === 'kedi').slice(0, 3);
   const dogs = products.filter((p) => p.animal === 'kopek').slice(0, 3);
   const subBrands = [...new Set(products.map((p) => p.subBrand))];
+  const totalReviews = products.reduce((n, p) => n + (p.reviewCount || 0), 0);
+  const rated = products.filter((p) => p.reviewCount);
+  const avgRating = rated.length
+    ? rated.reduce((n, p) => n + p.rating * p.reviewCount, 0) / totalReviews : 0;
 
   const body = `
 <section class="hero">
@@ -114,15 +137,14 @@ function pageHome() {
         <a class="btn btn--ghost btn--lg" style="color:#fff;border-color:rgba(255,255,255,.35)" href="${base}satis-noktalari.html">Satış Noktaları</a>
       </div>
       <div class="hero__stats">
-        <div class="hero__stat"><b>3</b><span>Ürün hattı</span></div>
-        <div class="hero__stat"><b>${products.length}</b><span>Ürün çeşidi</span></div>
+        <div class="hero__stat"><b>${avgRating.toFixed(1).replace('.', ',')} ★</b><span>Trendyol puanı</span></div>
+        <div class="hero__stat"><b>${totalReviews}</b><span>Müşteri değerlendirmesi</span></div>
         <div class="hero__stat"><b>%100</b><span>Yerli üretim</span></div>
       </div>
     </div>
     <div class="hero__art">
       <div class="hero__showcase">
         <img src="${base}${imgOf(products[0])}" alt="${esc(products[0].name)}" width="560" height="560">
-        <span class="hero__tag">${esc(products[0].badge)}</span>
       </div>
     </div>
   </div>
@@ -136,7 +158,7 @@ function pageHome() {
       <p>Ürünlerimizi hayvanınızın ihtiyacına göre filtreleyerek inceleyebilirsiniz.</p>
     </div>
     <div class="topics-row">
-      ${topics.map((t) => `<a class="topic-circle" href="${base}urunler.html#${t.slug}">${esc(t.name)}</a>`).join('')}
+      ${usedTopics.map((t) => `<a class="topic-circle" href="${base}urunler.html#${t.slug}">${esc(t.name)}</a>`).join('')}
     </div>
   </div>
 </section>
@@ -156,12 +178,12 @@ function pageHome() {
   <div class="wrap">
     <div class="section-head"><span class="eyebrow">Ürün ailelerimiz</span><h2>Alt Markalarımız</h2></div>
     <div class="brandstrip">
-      ${subBrands.map((b, i) => `<a class="brandstrip__item" href="${base}urunler.html">${i < 3 ? '<span class="brandstrip__new">YENİ</span>' : ''}${esc(b)}</a>`).join('')}
+      ${products.map((p) => `<a class="brandstrip__item" href="${base}urun/${p.slug}.html" style="--line:${p.accent}">${esc(p.subBrand)}</a>`).join('')}
     </div>
   </div>
 </section>
 
-<section class="section section--soft">
+${dogs.length ? `<section class="section section--soft">
   <div class="wrap">
     <div class="section-head"><span class="eyebrow">Köpek</span><h2>Köpek Ürünleri</h2></div>
     <div class="grid-products">
@@ -170,7 +192,7 @@ function pageHome() {
     </div>
     <div class="center" style="margin-top:38px"><a class="btn btn--primary" href="${base}urunler/kopek.html">Tüm Köpek Ürünleri</a></div>
   </div>
-</section>
+</section>` : ''}
 
 <section class="section">
   <div class="wrap">
@@ -284,21 +306,21 @@ function pageProduct(p) {
         .join('')}</div>`
     : `<div class="soon-note">${icons.pin}<span>Bu ürün yakında satışa sunulacaktır. Satış noktaları için <a href="${base}iletisim.html" style="color:var(--accent-700);text-decoration:underline">bizimle iletişime geçebilirsiniz</a>.</span></div>`;
 
+  const trendyolLink = (p.links.find((l) => l.store === 'trendyol') || {}).url;
   const reviews = p.reviews.length
     ? p.reviews.map((r) => `<article class="review">
-        <div class="review__stars">${'★'.repeat(r.stars)}${'☆'.repeat(5 - r.stars)}</div>
-        <h4>${esc(r.title)}</h4>
-        <div class="review__meta">${esc(r.date)} · ${esc(r.author)}</div>
+        <div class="review__stars" aria-label="${r.stars} yıldız">${'★'.repeat(r.stars)}${'☆'.repeat(5 - r.stars)}</div>
+        ${r.title ? `<h4>${esc(r.title)}</h4>` : ''}
+        <div class="review__meta">${[r.date, r.author].filter(Boolean).map(esc).join(' · ')}</div>
         <p>${esc(r.body)}</p>
-      </article>`).join('')
+      </article>`).join('') + (trendyolLink ? `<p class="reviews__source">Yorumlar Trendyol'daki doğrulanmış alışverişlerden alınmıştır.
+        <a href="${trendyolLink}" target="_blank" rel="noopener nofollow">Tüm ${p.reviewCount} değerlendirmeyi Trendyol'da görün →</a></p>` : '')
     : `<div class="empty-state"><p>Bu ürün için henüz değerlendirme yapılmamış.</p></div>`;
 
-  const steps = [
-    ['Tüpü kullanmadan önce oda sıcaklığında tutunuz ve kapağını çeviriniz.', 'Keep the tube at room temperature and twist the cap open.'],
-    ['Önerilen miktarı tüpün ucundan ölçerek hazırlayınız.', 'Measure the recommended amount from the tip of the tube.'],
-    ['Ürünü doğrudan verebilir ya da mamanın üzerine sıkabilirsiniz.', 'Give directly or squeeze onto the feed.'],
-    ['Kullanım sonrası kapağı kapatarak serin ve kuru yerde saklayınız.', 'Close the cap and store in a cool, dry place after use.'],
-  ];
+  const photos = photosFor(p.slug);
+  const gallery = photos.length
+    ? photos.map((f, i) => ({ src: `assets/img/products/${f}`, alt: `${p.name} – görsel ${i + 1}` }))
+    : [{ src: imgOf(p), alt: `${p.name} ürün görseli` }, { src: `assets/img/info-${p.slug}.svg`, alt: `${p.name} içerik bilgisi` }];
 
   const body = `
 ${breadcrumb([
@@ -311,12 +333,11 @@ ${breadcrumb([
   <div class="pdp">
     <div class="gallery">
       <div class="gallery__thumbs">
-        <button class="gallery__thumb active" type="button" data-full="${base}${imgOf(p)}"><img src="${base}${imgOf(p)}" alt="${esc(p.name)} ürün görseli"></button>
-        <button class="gallery__thumb" type="button" data-full="${base}assets/img/info-${p.slug}.svg"><img src="${base}assets/img/info-${p.slug}.svg" alt="${esc(p.name)} içerik bilgisi"></button>
+        ${gallery.map((g, i) => `<button class="gallery__thumb${i ? '' : ' active'}" type="button" data-full="${base}${g.src}" aria-label="Görsel ${i + 1}"><img src="${base}${g.src}" alt="${esc(g.alt)}" loading="lazy"></button>`).join('')}
       </div>
       <div class="gallery__main">
         <button class="gallery__nav gallery__nav--prev" id="galPrev" type="button" aria-label="Önceki görsel">‹</button>
-        <img id="galleryMain" src="${base}${imgOf(p)}" alt="${esc(p.name)}" width="560" height="560">
+        <img id="galleryMain" src="${base}${gallery[0].src}" alt="${esc(gallery[0].alt)}">
         <button class="gallery__nav gallery__nav--next" id="galNext" type="button" aria-label="Sonraki görsel">›</button>
       </div>
     </div>
@@ -326,7 +347,7 @@ ${breadcrumb([
       <h1 class="pdp__title">${esc(displayName(p))}</h1>
       ${stars(p.rating, p.reviewCount)}
       <div class="pdp__price">${price(p.price)}</div>
-      <p class="pdp__price-note">Tavsiye edilen perakende satış fiyatıdır. Satış noktalarında farklılık gösterebilir.</p>
+      <p class="pdp__price-note">Trendyol satış fiyatıdır; kampanyalara göre değişebilir. Güncel fiyat için mağazamızı ziyaret edin.</p>
 
       <div class="buybox">
         <div class="buybox__title">Nereden satın alabilirsiniz?</div>
@@ -343,9 +364,15 @@ ${breadcrumb([
       <div class="acc">
         <button class="acc__btn" type="button">Ürün Açıklaması<span class="acc__icon">−</span></button>
         <div class="acc__body">
-          <p><b>${esc(p.subBrand)}</b>, ${esc(p.short)}</p>
+          <p>${esc(p.intro)}</p>
+          <h3 class="acc__h">${esc(p.bulletsTitle || 'Faydaları')}</h3>
           <ul>${p.bullets.map((b) => `<li>${esc(b)}</li>`).join('')}</ul>
-          <div class="acc__ing"><b>Ürün İçeriği:</b><span>${esc(p.ingredients)}</span></div>
+          ${p.ingredientsDetail ? `<h3 class="acc__h">Öne Çıkan İçerikler</h3>
+          <dl class="ing-list">${p.ingredientsDetail.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('')}</dl>` : ''}
+          ${p.suitableFor ? `<h3 class="acc__h">Hangi Kediler İçin Uygundur?</h3>
+          <ul>${p.suitableFor.map((b) => `<li>${esc(b)}</li>`).join('')}</ul>` : ''}
+          ${p.attributes ? `<h3 class="acc__h">Ürün Özellikleri</h3>
+          <dl class="attr-list">${Object.entries(p.attributes).map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>` : ''}
         </div>
       </div>
     </div>
@@ -355,19 +382,21 @@ ${breadcrumb([
 <section class="section section--soft">
   <div class="wrap tabs">
     <div class="tabs__nav">
-      <button class="tabs__btn active" type="button" data-tab="tab-usage">${esc(p.usageTitle)}</button>
+      <button class="tabs__btn active" type="button" data-tab="tab-usage">${esc(p.usageTitle || 'Kullanım ve Saklama')}</button>
       <button class="tabs__btn" type="button" data-tab="tab-topic">${esc(p.topicTabTitle)}</button>
     </div>
 
     <div class="tabs__panel active" id="tab-usage">
-      <div class="steps">
-        ${steps.map(([tr, en], i) => `<div class="step">
-          <div class="step__no">${i + 1}</div>
-          <img src="${base}assets/img/step-${i + 1}.svg" alt="Adım ${i + 1}" loading="lazy">
-          <p>${esc(tr)}</p><small>${esc(en)}</small>
-        </div>`).join('')}
+      <div class="usage">
+        <div class="usage__text">
+          <p class="dosage-lead">${esc(p.dosage)}</p>
+          <h3>Kullanım Talimatı</h3>
+          <ul class="checklist">${(p.usage || []).map((u) => `<li>${esc(u)}</li>`).join('')}</ul>
+          ${p.storage ? `<h3>Saklama Koşulları</h3>
+          <ul class="checklist">${p.storage.map((u) => `<li>${esc(u)}</li>`).join('')}</ul>` : ''}
+        </div>
+        ${photos[2] ? `<figure class="usage__fig"><img src="${base}assets/img/products/${photos[2]}" alt="Günlük kullanım miktarı: yetişkin 3 cm, yavru 1 cm" loading="lazy"></figure>` : ''}
       </div>
-      <p class="dosage"><b>Kullanım Şekli:</b> ${esc(p.dosage)}</p>
     </div>
 
     <div class="tabs__panel" id="tab-topic">
@@ -398,7 +427,7 @@ ${related.length ? `<section class="section section--soft">
 
   return shell({
     title: displayName(p),
-    description: p.short,
+    description: p.intro,
     body, base, active: 'urunler.html',
     ogImage: imgOf(p),
   });
@@ -639,7 +668,7 @@ function buildAssets() {
         accent: p.accent, animal: p.animal, uid: p.slug.replace(/[^a-z0-9]/g, ''),
       }));
     }
-    img(`info-${p.slug}.svg`, art.infographic({
+    if (!photoFor(p.slug)) img(`info-${p.slug}.svg`, art.infographic({
       subBrand: p.subBrand, accent: p.accent,
       rows: p.ingredients.split(',').map((s) => s.trim()).slice(0, 5),
     }));
@@ -677,14 +706,14 @@ function build() {
     list: products, base: '', active: 'urunler.html',
   }));
 
-  animals.forEach((a) => write(`urunler/${a.slug}.html`, catalogPage({
+  usedAnimals.forEach((a) => write(`urunler/${a.slug}.html`, catalogPage({
     title: `${a.name} Ürünleri`,
     intro: `${a.name}ler için geliştirdiğimiz malt, mama ve besin takviyeleri.`,
     list: products.filter((p) => p.animal === a.slug),
     base: '../', active: `urunler/${a.slug}.html`,
   })));
 
-  productTypes.forEach((t) => write(`urunler/${t.slug}.html`, catalogPage({
+  usedTypes.forEach((t) => write(`urunler/${t.slug}.html`, catalogPage({
     title: t.name,
     intro: `${site.name} ${t.name.toLocaleLowerCase('tr')} ürünleri.`,
     list: products.filter((p) => p.type === t.slug),
@@ -716,8 +745,8 @@ function build() {
   const urls = [
     '', 'urunler.html', 'hakkimizda.html', 'uretim-ve-kalite.html', 'kariyer.html',
     'satis-noktalari.html', 'iletisim.html', 'blog.html', 'gizlilik-politikasi.html', 'kvkk.html',
-    ...animals.map((a) => `urunler/${a.slug}.html`),
-    ...productTypes.map((t) => `urunler/${t.slug}.html`),
+    ...usedAnimals.map((a) => `urunler/${a.slug}.html`),
+    ...usedTypes.map((t) => `urunler/${t.slug}.html`),
     ...products.map((p) => `urun/${p.slug}.html`),
     ...posts.map((p) => `blog/${p.slug}.html`),
   ];
