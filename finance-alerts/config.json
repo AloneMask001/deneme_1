@@ -1,0 +1,9 @@
+{
+  "alerts": [
+    {"name": "USD/TRY 45 üstü",       "symbol": "USDTRY",      "type": "above",      "value": 45},
+    {"name": "EUR/TRY 50 altı",       "symbol": "EURTRY",      "type": "below",      "value": 50},
+    {"name": "Gram altın 6000 üstü",  "symbol": "GRAM_ALTIN",  "type": "above",      "value": 6000},
+    {"name": "THYAO günlük ±%3",      "symbol": "THYAO.IS",    "type": "change_pct", "value": 3},
+    {"name": "BIST100 günlük ±%2",    "symbol": "XU100.IS",    "type": "change_pct", "value": 2}
+  ]
+}
